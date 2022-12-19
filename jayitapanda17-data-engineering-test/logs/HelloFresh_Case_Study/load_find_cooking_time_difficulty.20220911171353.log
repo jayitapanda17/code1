@@ -1,0 +1,23 @@
+2022-09-11 17:13 task:main: INFO    : Building spark session
+2022-09-11 17:13 task:main: INFO    : Starting spark application
+2022-09-11 17:13 task:main: INFO    : Checking input file format, expecting JSON
+2022-09-11 17:13 dq_check:validate_file_type: INFO    : All the source files are in expected format
+2022-09-11 17:13 task:main: INFO    : ------------- READING INPUT DATA ---------------
+2022-09-11 17:13 task:read_input: INFO    : Reading input data from source location
+2022-09-11 17:13 task:main: INFO    : ------------- RUNNING SOURCE DATA QUALITY CHECKS---------------
+2022-09-11 17:13 task:main: INFO    : Checking column count
+2022-09-11 17:13 dq_check:validate_num_source_column_count: INFO    : Column count matched, data quality check passed
+2022-09-11 17:13 task:main: INFO    : ----------------PROCESSING AND TRANSFORMING-------------------
+2022-09-11 17:13 task:transform_data: INFO    : Extract only recipes that have beef as one of the ingredients.
+2022-09-11 17:13 task:transform_data: INFO    : extracting cooktime from ISO format
+2022-09-11 17:13 task:transform_data: INFO    : calculating total cooktime
+2022-09-11 17:13 task:transform_data: INFO    : calculating average cooktime
+2022-09-11 17:13 task:main: INFO    : -----------------RUNNING DATA QUALITY CHECKS AFTER TRANSFORMATION------------------
+2022-09-11 17:13 task:main: INFO    : Checking target row count
+2022-09-11 17:13 dq_check:validate_target_row_count: INFO    : Target row count matched, data quality check passed
+2022-09-11 17:13 task:main: INFO    : Checking target column count
+2022-09-11 17:13 dq_check:validate_target_col_count: INFO    : Target column count matched, data quality check passed
+2022-09-11 17:13 task:main: INFO    : -----------------WRITING DATA TO OUTPUT------------------
+2022-09-11 17:13 task:write_output: INFO    : Saving file to destination
+2022-09-11 17:13 task:main: INFO    : Ending spark application
+2022-09-11 17:13 clientserver:close: INFO    : Closing down clientserver connection
