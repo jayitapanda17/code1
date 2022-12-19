@@ -1,0 +1,92 @@
+my_solution
+
+select * from hotels;	
+select * from clicks;
+select * from bookings;
+
+*********Task1************
+
+--Given a set of hotels,
+--as well as the clicks and bookings received by
+--each of these hotels in a certain period of time,
+--calculate the booking conversion rate 
+--(i.e. the fraction of clicks that get converted into bookings) per country, ordered by country name.
+
+Solution:
+
+with cte1 as(
+select h.country,coalesce(sum(b.number_bookings),0) as total_count_booking from hotels h left join bookings b on
+h.hotel_id =b.hotel_id group by h.country order by h.country),
+cte2 as(
+select h.country,nullif(sum(c.number_clicks),0) as total_number_clicks from hotels h left join clicks c on 
+h.hotel_id =c.hotel_id group by h.country)
+select c1.country, cast(c1.total_count_booking as double precision)/(c2.total_number_clicks) as booking_conversion
+from
+cte1 c1 join cte2 c2 on c1.country = c2.country group by c1.country,c1.total_count_booking,c2.total_number_clicks 
+order by c1.country;
+
+Comments:
+CTE1:
+ I am calculating total number of bookings for each country ordering by country using hotels table and bookings table.While calculating sum ,tring to check null and replace null with 0 using coalesce.
+CTE2:
+I am calculating total number of clicks for each country using hotels table and clicks table.
+
+Finally returning the actual details country and booking_conversionfrom cte1 and cte2.
+
+*********Task2************
+
+select * from travelers;
+select * from guest_list;
+
+--Given a list of travelers and a 
+--guest list of hotels the travelers stayed at,
+--identify the set of travelers 
+--that may have stayed in the same hotel 
+--as one of their parents (ordered by name).
+--Assume that there must be an 
+--age difference of at least 16 years between a child and their parents. 
+
+Solution:
+
+with temp1 as(
+select t1.name as parents,t2.name as children,t1.age,t2.age  from travelers t1
+,travelers t2 where (t1.age-t2.age) >= 16 ),
+temp2 as(select temp1.parents,temp1.children,g1.hotel as hotel_of_parent,g2.hotel as hotel_of_children from temp1 inner join guest_list g1 on temp1.parents = g1.traveler
+inner join guest_list g2 on temp1.children = g2.traveler)
+select temp2.children as traveler_name
+from temp2 where temp2.hotel_of_parent = temp2.hotel_of_children group by temp2.children order by temp2.children;
+
+Comments:
+
+Temp1:
+Trying to get details of the possible parents and children with the where condition.
+Temp2:
+Trying to see the possible hotels where a parent can stay and possible hotels where children stays.
+
+Finally trying to get the details od children who are staying with parents in same hotel
+
+*********Task3************
+
+select * from reservations;
+
+Question:
+---You are asked to support the management of a hotel, more specifically **how many rooms** should be prepared and opened for each given week. We want to minimize the number of served rooms so that we also minimize maintenance costs. Assume that the number of guests is always 2 per room and that a room can always be made available the same day as the check-out date.
+
+
+Solution:
+
+select week,max(num_rooms) as number_of_rooms from (
+select reservation_id,week, count(*) as num_rooms 
+	from 
+	(select t.*, concat(date_part('year', t.check_in_date),'-',date_part('week', t.check_in_date)) as week
+	  from reservations t
+       left join reservations y on cast(t.check_in_date as Date) >= cast(y.check_in_date as Date) 
+	  and cast(t.check_in_date as Date) < cast(y.check_out_date as Date) )temp1 
+	  group by reservation_id, week order by week)temp2 
+	  group by week order by week;
+
+Comments:
+
+Firstof all getting the details of week for those particular entries,where there is a checkin date leasse than checkout date using self join,also possible details where checkin-date is either equal or more.
+Then calculating the no of rooms for each reservation and week,Finally returing the number_of_rooms required per week.
+
